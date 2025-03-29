@@ -1,6 +1,6 @@
-public class employeeRepository : RepositoryBase<Employee>, IEmployeeRepository
+public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
 {
-    public employeeRepository(EmployeeContext dbcontext) : base(dbcontext)
+    public EmployeeRepository(EmployeeContext dbcontext) : base(dbcontext)
     {
     }
 }
