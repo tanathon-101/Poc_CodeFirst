@@ -1,8 +1,8 @@
 public class EmployeeProcess :IEmployeeProcess
 {
-    private readonly IRepositoryBase<Employee>  _employeeRepository;
+    private readonly IEmployeeRepository  _employeeRepository;
 
-    public EmployeeProcess(IRepositoryBase<Employee> employeeRepository)
+    public EmployeeProcess(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository;
     }
