@@ -9,8 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<EmployeeContext>(opts => 
     opts.UseSqlServer(builder.Configuration["ConnectionString:EmployeeDB"]));
 
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 
- builder.Services.AddControllers();
+builder.Services.AddScoped<IEmployeeProcess, EmployeeProcess>();    
+
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
