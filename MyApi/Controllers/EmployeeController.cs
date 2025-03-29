@@ -5,19 +5,21 @@ using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Annotations; // Added for Swagger annotations
 
 [ApiController]
-
-[Route("[controller]")]
+[Route("api/[controller]")] // No version
 public class EmployeesController : ControllerBase
 {
     private readonly IEmployeeProcess _employeeProcess;
     private readonly ILogger<EmployeesController> _logger;
 
-    public EmployeesController(IEmployeeProcess employeeProcess, ILogger<EmployeesController> logger)
+    public EmployeesController(IEmployeeProcess employeeProcess,
+     ILogger<EmployeesController> logger)
     {
         _employeeProcess = employeeProcess ?? throw new ArgumentNullException(nameof(employeeProcess));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    [HttpGet("test")]   
+    public IActionResult Test() => Ok("Hello");
     // GET: api/Employees
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Employee>), StatusCodes.Status200OK)]
@@ -27,7 +29,7 @@ public class EmployeesController : ControllerBase
         Description = "Retrieves a list of all employees in the system",
         OperationId = "GetAllEmployees"
     )]
-    public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
+    public async Task<IActionResult> GetEmployees()
     {
         try
         {
@@ -53,7 +55,7 @@ public class EmployeesController : ControllerBase
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Employee found", typeof(Employee))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Employee not found")]
-    public async Task<ActionResult<Employee>> GetEmployee(int id)
+    public async Task<IActionResult> GetEmployee(int id)
     {
         try
         {
@@ -83,7 +85,7 @@ public class EmployeesController : ControllerBase
         Description = "Creates a new employee in the system",
         OperationId = "CreateEmployee"
     )]
-    public async Task<ActionResult<Employee>> CreateEmployee([FromBody] Employee employee)
+    public async Task<IActionResult> CreateEmployee([FromBody] Employee employee)
     {
         try
         {
