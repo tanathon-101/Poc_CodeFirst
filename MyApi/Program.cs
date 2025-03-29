@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -6,30 +7,28 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<EmployeeContext>(opts => 
     opts.UseSqlServer(builder.Configuration["ConnectionString:EmployeeDB"]));
-
-//builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 builder.Services.AddScoped<IEmployeeProcess, EmployeeProcess>();  
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();      
 
+
+
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Employee API",
+        Version = "1.0",
+        Description = "API for managing employee data",
+    });
+   options.EnableAnnotations();
+});
+
+
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure Swagger with additional options
-builder.Services.AddSwaggerGen(c =>
-{
-    
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Employee API",
-        Version = "v1",
-        Description = "API for managing employee data",
-        Contact = new OpenApiContact
-        {
-            Name = "Your Name",
-            Email = "your.email@example.com"
-        }
-    });
-});
+
 
 var app = builder.Build();
 
@@ -37,14 +36,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
+     app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
-        c.RoutePrefix = string.Empty; // Makes Swagger UI available at root URL
-        // Optional: Customize UI
-        c.DisplayRequestDuration();
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = string.Empty;
     });
 }
 
 app.MapControllers();
-app.Run();
+await app.RunAsync();
