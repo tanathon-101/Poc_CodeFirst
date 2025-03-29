@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
+
 public class EmployeeContext : DbContext
     {
         public EmployeeContext(DbContextOptions options)
