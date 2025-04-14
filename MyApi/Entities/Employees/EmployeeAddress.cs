@@ -10,6 +10,7 @@ namespace MyApi.Entities
     public string Street { get; set; }
     public string City { get; set; }
     public string PostalCode { get; set; }
+    [System.ComponentModel.DataAnnotations.Schema.ForeignKey("EmployeeId")]
 
     public Employee Employee { get; set; }
     }

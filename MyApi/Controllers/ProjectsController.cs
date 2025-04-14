@@ -1,53 +1,101 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.EntityFrameworkCore;
+using MyApi.DTO.ProjectDTO;
 using MyApi.Entities;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProjectsController : ControllerBase
+namespace MyApi.Controllers
 {
-    private readonly EmployeeContext _context;
-    public ProjectsController(EmployeeContext context) => _context = context;
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _context.Projects.ToListAsync());
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(long id)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProjectController : ControllerBase
     {
-        var project = await _context.Projects.FindAsync(id);
-        return project == null ? NotFound() : Ok(project);
-    }
+        private readonly EmployeeContext _context;
 
-    [HttpPost]
-    public async Task<IActionResult> Create(Project project)
-    {
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(Get), new { id = project.ProjectId }, project);
-    }
+        public ProjectController(EmployeeContext context)
+        {
+            _context = context;
+        }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(long id, Project updated)
-    {
-        if (id != updated.ProjectId) return BadRequest();
-        _context.Entry(updated).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
+        // GET: api/project
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectResponse>>> GetAllProjects()
+        {
+            var projects = await _context.Projects
+                .Select(p => new ProjectResponse
+                {
+                    ProjectId = p.ProjectId,
+                    ProjectName = p.ProjectName
+                })
+                .ToListAsync();
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
-    {
-        var project = await _context.Projects.FindAsync(id);
-        if (project == null) return NotFound();
-        _context.Projects.Remove(project);
-        await _context.SaveChangesAsync();
-        return NoContent();
+            return Ok(projects);
+        }
+
+        // GET: api/project/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProjectResponse>> GetProject(long id)
+        {
+            var project = await _context.Projects.FindAsync(id);
+
+            if (project == null)
+                return NotFound();
+
+            return new ProjectResponse
+            {
+                ProjectId = project.ProjectId,
+                ProjectName = project.ProjectName
+            };
+        }
+
+        // POST: api/project
+        [HttpPost]
+        public async Task<ActionResult<ProjectResponse>> CreateProject(CreateProjectRequest request)
+        {
+            var project = new Project
+            {
+                ProjectName = request.ProjectName
+            };
+
+            _context.Projects.Add(project);
+            await _context.SaveChangesAsync();
+
+            var response = new ProjectResponse
+            {
+                ProjectId = project.ProjectId,
+                ProjectName = project.ProjectName
+            };
+
+            return CreatedAtAction(nameof(GetProject), new { id = project.ProjectId }, response);
+        }
+
+        // PUT: api/project/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProject(long id, UpdateProjectRequest request)
+        {
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
+                return NotFound();
+
+            project.ProjectName = request.ProjectName;
+
+            _context.Entry(project).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // DELETE: api/project/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProject(long id)
+        {
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
+                return NotFound();
+
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
-
