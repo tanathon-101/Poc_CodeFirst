@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MyApi.Migrations.EmployeeMigrations
 {
     [DbContext(typeof(EmployeeContext))]
-    partial class EmployeeContextModelSnapshot : ModelSnapshot
+    [Migration("20250408093326_InitComplexModel")]
+    partial class InitComplexModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +75,7 @@ namespace MyApi.Migrations.EmployeeMigrations
 
                     b.HasKey("DepartmentId");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Department");
                 });
 
             modelBuilder.Entity("MyApi.Entities.EmployeeAddress", b =>
@@ -94,7 +97,7 @@ namespace MyApi.Migrations.EmployeeMigrations
 
                     b.HasKey("EmployeeId");
 
-                    b.ToTable("EmployeeAddresses");
+                    b.ToTable("EmployeeAddress");
                 });
 
             modelBuilder.Entity("MyApi.Entities.EmployeeProject", b =>
@@ -109,7 +112,7 @@ namespace MyApi.Migrations.EmployeeMigrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("EmployeeProjects");
+                    b.ToTable("EmployeeProject");
                 });
 
             modelBuilder.Entity("MyApi.Entities.EmployeeTask", b =>
@@ -135,7 +138,7 @@ namespace MyApi.Migrations.EmployeeMigrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeTasks");
+                    b.ToTable("EmployeeTask");
                 });
 
             modelBuilder.Entity("MyApi.Entities.Project", b =>
@@ -152,7 +155,7 @@ namespace MyApi.Migrations.EmployeeMigrations
 
                     b.HasKey("ProjectId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("Employee", b =>
