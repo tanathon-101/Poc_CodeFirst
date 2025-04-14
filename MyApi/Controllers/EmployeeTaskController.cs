@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyApi.DTO.EmployeeTaskDTO;
 using MyApi.Entities;
+using MyApi.Entities.Employees;
 
-namespace MyApi.Controllers.Employee
+namespace MyApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -15,58 +17,101 @@ namespace MyApi.Controllers.Employee
             _context = context;
         }
 
-        // POST: api/EmployeeTask
-        [HttpPost]
-        public async Task<ActionResult<EmployeeTask>> AddTask(EmployeeTask task)
+        // GET: api/employeetask
+        [HttpGet()]
+        public async Task<ActionResult<IEnumerable<EmployeeTaskResponse>>> GetAllTasks()
         {
-            if (!_context.Employees.Any(e => e.EmployeeId == task.EmployeeId))
-            {
-                return BadRequest($"EmployeeId {task.EmployeeId} not found.");
-            }
+            var tasks = await (from task in _context.EmployeeTasks
+                               join emp in _context.Employees
+                               on task.EmployeeId equals emp.EmployeeId
+                               select new EmployeeTaskResponse
+                               {
+                                   TaskId = task.TaskId,
+                                   Title = task.Title,
+                                   Description = task.Description,
+                                   EmployeeId = emp.EmployeeId,
+                                   EmployeeName = $"{emp.FirstName} {emp.LastName}"
+                               }).ToListAsync();
 
-            _context.EmployeeTasks.Add(task);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetTask), new { id = task.TaskId }, task);
+            return Ok(tasks);
         }
 
-        // GET: api/EmployeeTask/5 (ใช้ใน CreatedAtAction)
+        // GET: api/employeetask/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<EmployeeTask>> GetTask(long id)
+        public async Task<ActionResult<EmployeeTaskResponse>> GetTask(long id)
         {
-            var task = await _context.EmployeeTasks.FindAsync(id);
+            var task = await _context.EmployeeTasks
+                .FirstOrDefaultAsync(t => t.TaskId == id);
 
             if (task == null)
                 return NotFound();
 
-            return task;
+            var response = new EmployeeTaskResponse
+            {
+                TaskId = task.TaskId,
+                Title = task.Title,
+                Description = task.Description,
+                EmployeeId = task.EmployeeId,
+            };
+
+            return Ok(response);
         }
 
-        // PUT: api/EmployeeTask/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(long id, EmployeeTask task)
+        // POST: api/employeetask
+        [HttpPost]
+        public async Task<ActionResult<EmployeeTaskResponse>> CreateTask(CreateEmployeeTaskRequest request)
         {
-            if (id != task.TaskId)
-                return BadRequest();
-
-            if (!_context.Employees.Any(e => e.EmployeeId == task.EmployeeId))
+            var task = new EmployeeTask
             {
-                return BadRequest($"EmployeeId {task.EmployeeId} not found.");
-            }
+                Title = request.Title,
+                Description = request.Description,
+                EmployeeId = request.EmployeeId
+            };
+
+            _context.EmployeeTasks.Add(task);
+            await _context.SaveChangesAsync();
+
+            var employee = await _context.Employees.FindAsync(task.EmployeeId);
+
+            var response = new EmployeeTaskResponse
+            {
+                TaskId = task.TaskId,
+                Title = task.Title,
+                Description = task.Description,
+                EmployeeId = task.EmployeeId,
+                EmployeeName = $"{employee.FirstName} {employee.LastName}"
+            };
+
+            return CreatedAtAction(nameof(GetTask), new { id = task.TaskId }, response);
+        }
+
+        // PUT: api/employeetask/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(long id, UpdateEmployeeTaskRequest request)
+        {
+            var task = await _context.EmployeeTasks.FindAsync(id);
+            if (task == null)
+                return NotFound();
+
+            task.Title = request.Title;
+            task.Description = request.Description;
 
             _context.Entry(task).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.EmployeeTasks.Any(t => t.TaskId == id))
-                    return NotFound();
+            return NoContent();
+        }
 
-                throw;
-            }
+        // DELETE: api/employeetask/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTask(long id)
+        {
+            var task = await _context.EmployeeTasks.FindAsync(id);
+            if (task == null)
+                return NotFound();
+
+            _context.EmployeeTasks.Remove(task);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

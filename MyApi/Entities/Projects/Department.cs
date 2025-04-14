@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyApi.Entities
+namespace MyApi.Entities.Projects
 {
     public class Department
     {
@@ -11,7 +11,5 @@ namespace MyApi.Entities
     
     public string Name { get; set; }
 
-    // Navigation property
-    public ICollection<Employee> Employees { get; set; }
     }
 }

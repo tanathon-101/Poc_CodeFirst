@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Annotations;
 using MyApi.Entities;
 using Microsoft.EntityFrameworkCore;
+using MyApi.Entities.Employees;
 
 [Route("api/[controller]")]
 [ApiController]

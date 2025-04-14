@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MyApi.Entities
+namespace MyApi.Entities.Employees
 {
     public class EmployeeAddress
     {
@@ -10,8 +10,6 @@ namespace MyApi.Entities
     public string Street { get; set; }
     public string City { get; set; }
     public string PostalCode { get; set; }
-    [System.ComponentModel.DataAnnotations.Schema.ForeignKey("EmployeeId")]
 
-    public Employee Employee { get; set; }
     }
 }

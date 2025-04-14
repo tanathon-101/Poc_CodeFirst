@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyApi.Entities.Employees;
 
-namespace MyApi.Entities
+namespace MyApi.Entities.Projects
 {
    public class Project
 {
@@ -11,8 +12,6 @@ namespace MyApi.Entities
 
     public string ProjectName { get; set; }
 
-    // Many-to-Many with Employee
-    public ICollection<EmployeeProject> EmployeeProjects { get; set; }
 }
 
     

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyApi.Entities
+namespace MyApi.Entities.Employees
 {
     public class EmployeeTask
     {
@@ -13,6 +13,6 @@ namespace MyApi.Entities
     public string Description { get; set; }
 
     public long EmployeeId { get; set; }
-    public Employee Employee { get; set; }
+    
     }
 }

@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MyApi.Entities;
+using MyApi.Entities.Employees;
+using MyApi.Entities.Projects;
 
 public class Employee
     {

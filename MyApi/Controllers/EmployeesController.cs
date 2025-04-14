@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.EntityFrameworkCore;
 using MyApi.Entities;
+using MyApi.Entities.Employees;
+using MyApi.DTO.EmployeesDTO;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -21,14 +23,17 @@ public class EmployeesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
     {
-        return await _context.Employees
+        var employees = await _context.Employees
             .Include(e => e.Department)
             .Include(e => e.Address)
-            .Include(e => e.EmployeeProjects)
-                .ThenInclude(ep => ep.Project)
+            .Include(e => e.EmployeeProjects).ThenInclude(ep => ep.Project)
             .Include(e => e.Tasks)
             .ToListAsync();
+
+
+        return Ok(employees);
     }
+
 
     // GET: api/employees/5
     [HttpGet("{id}")]
@@ -49,39 +54,40 @@ public class EmployeesController : ControllerBase
     }
 
     // POST: api/employees
-[HttpPost]
-public async Task<ActionResult<Employee>> CreateEmployee(CreateEmployeeRequest request)
-{
-    var employee = new Employee
+    [HttpPost]
+    public async Task<ActionResult<Employee>> CreateEmployee(CreateEmployeeRequest request)
     {
-        FirstName = request.FirstName,
-        LastName = request.LastName,
-        DateOfBirth = request.DateOfBirth,
-        PhoneNumber = request.PhoneNumber,
-        Email = request.Email,
-        DepartmentId = request.DepartmentId,
-        Address = new EmployeeAddress
+        var employee = new Employee
         {
-            Street = request.Address?.Street,
-            City = request.Address?.City,
-            PostalCode = request.Address?.PostalCode
-        },
-        Tasks = request.Tasks?.Select(t => new EmployeeTask
-        {
-            Title = t.Title,
-            Description = t.Description,
-       }).ToList(),
-        EmployeeProjects = request.EmployeeProjects?.Select(p => new EmployeeProject
-        {
-            ProjectId = p.ProjectId
-        }).ToList()
-    };
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            DateOfBirth = request.DateOfBirth,
+            PhoneNumber = request.PhoneNumber,
+            Email = request.Email,
+            DepartmentId = request.DepartmentId,
+            Address = new EmployeeAddress
+            {
+                Street = request.Address?.Street,
+                City = request.Address?.City,
+                PostalCode = request.Address?.PostalCode
+            },
+            Tasks = request.Tasks?.Select(t => new EmployeeTask
+            {
+                Title = t.Title,
+                Description = t.Description,
 
-    _context.Employees.Add(employee);
-    await _context.SaveChangesAsync();
+            }).ToList(),
+            EmployeeProjects = request.EmployeeProjects?.Select(p => new EmployeeProject
+            {
+                ProjectId = p.ProjectId
+            }).ToList()
+        };
 
-    return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeId }, employee);
-}
+        _context.Employees.Add(employee);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeId }, employee);
+    }
 
 
     // PUT: api/employees/5

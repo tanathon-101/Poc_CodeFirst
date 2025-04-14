@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyApi.DTO.ProjectDTO;
 using MyApi.Entities;
+using MyApi.Entities.Projects;
 
 namespace MyApi.Controllers
 {
