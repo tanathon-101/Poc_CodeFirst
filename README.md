@@ -14,7 +14,5 @@ A clean and scalable RESTful API built with **ASP.NET Core + EF Core**, designed
 - unitTest (ยังไม่ทำ)
 
 ---
-
-## 🗂️ Project Structure
-
-Use AI Help
+dotnet ef migrations add InitialCreate
+dotnet ef database update
