@@ -10,7 +10,8 @@ A clean and scalable RESTful API built with **ASP.NET Core + EF Core**, designed
 - 📎 Assign employees to multiple projects (Many-to-Many)
 - 📌 Nested DTOs (create employee + address + tasks + projects at once)
 - 🔁 Prevents JSON cycles via unidirectional navigation & DTO mapping
-- 🧹 Clean architecture with Fluent API for EF Core
+- 🧹 Clean architecture with Fluent API for EF Core (ยังไม่ทำ)
+- unitTest (ยังไม่ทำ)
 
 ---
 
