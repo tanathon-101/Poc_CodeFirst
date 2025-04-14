@@ -1,10 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.EntityFrameworkCore;
-using MyApi.Entities;
 using MyApi.Entities.Employees;
 using MyApi.DTO.EmployeesDTO;
 

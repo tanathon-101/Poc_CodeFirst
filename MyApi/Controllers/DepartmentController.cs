@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using MyApi.Entities;
 using Microsoft.EntityFrameworkCore;
-using MyApi.DTO.DepartmenDTO;
 using MyApi.Entities.Projects;
+using MyApi.DTO.DepartmentDTO;
 
 namespace MyApi.Controllers
 {

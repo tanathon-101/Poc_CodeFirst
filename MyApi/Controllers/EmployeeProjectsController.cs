@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyApi.DTO.EmployeeProjectDTO;
-using MyApi.Entities;
 using MyApi.Entities.Employees;
 
 [Route("api/[controller]")]

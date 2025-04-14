@@ -71,7 +71,6 @@ namespace MyApi.Controllers
             _context.EmployeeTasks.Add(task);
             await _context.SaveChangesAsync();
 
-            // 👇 เช็คว่ามี EmployeeId หรือไม่
             string employeeName = null;
             if (task.EmployeeId.HasValue)
             {

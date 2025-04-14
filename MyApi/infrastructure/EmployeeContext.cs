@@ -17,30 +17,27 @@ public class EmployeeContext : DbContext
 
         modelBuilder.Entity<EmployeeProject>()
             .HasOne(ep => ep.Project)
-            .WithMany() // ❌ ไม่มี Project.EmployeeProjects แล้ว
+            .WithMany() 
             .HasForeignKey(ep => ep.ProjectId);
 
         modelBuilder.Entity<EmployeeProject>()
-            .HasOne<Employee>() // ไม่มี ep.Employee ใน model แล้ว
+            .HasOne<Employee>() 
             .WithMany(e => e.EmployeeProjects)
             .HasForeignKey(ep => ep.EmployeeId);
 
-        // 🔗 One-to-One: Employee <-> EmployeeAddress
         modelBuilder.Entity<Employee>()
         .HasOne(e => e.Address)
-        .WithOne() // 👈 ไม่มี a => a.Employee แล้ว
+        .WithOne() 
         .HasForeignKey<EmployeeAddress>(a => a.EmployeeId);
 
-        // 📌 One-to-Many: Employee -> Tasks
         modelBuilder.Entity<EmployeeTask>()
-            .HasOne<Employee>() // ไม่มี t.Employee แล้ว ต้องใช้แบบนี้
+            .HasOne<Employee>() 
             .WithMany(e => e.Tasks)
             .HasForeignKey(t => t.EmployeeId);
 
-        // ✅ One-to-Many (unidirectional): Employee -> Department
         modelBuilder.Entity<Employee>()
             .HasOne(e => e.Department)
-            .WithMany() // ไม่มี Department.Employees แล้ว
+            .WithMany()
             .HasForeignKey(e => e.DepartmentId);
     }
 

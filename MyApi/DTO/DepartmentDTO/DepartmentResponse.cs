@@ -1,4 +1,4 @@
-namespace MyApi.DTO.DepartmenDTO
+namespace MyApi.DTO.DepartmentDTO
 {
     public class DepartmentResponse
     {
