@@ -12,7 +12,7 @@ namespace MyApi.Entities.Employees
     public string Title { get; set; }
     public string Description { get; set; }
 
-    public long EmployeeId { get; set; }
+    public long? EmployeeId { get; set; }
     
     }
 }

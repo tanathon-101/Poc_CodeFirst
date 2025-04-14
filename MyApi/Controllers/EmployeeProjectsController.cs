@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Swashbuckle.AspNetCore.Annotations;
-using MyApi.Entities;
 using Microsoft.EntityFrameworkCore;
+using MyApi.DTO.EmployeeProjectDTO;
+using MyApi.Entities;
 using MyApi.Entities.Employees;
 
 [Route("api/[controller]")]
@@ -14,16 +11,25 @@ public class EmployeeProjectsController : ControllerBase
     private readonly EmployeeContext _context;
     public EmployeeProjectsController(EmployeeContext context) => _context = context;
 
+    // POST: api/employeeprojects
     [HttpPost]
-    public async Task<IActionResult> AssignToProject(EmployeeProject model)
+    public async Task<IActionResult> AssignToProject([FromBody] AssignEmployeeToProjectRequest request)
     {
-        _context.EmployeeProjects.Add(model);
+        var entity = new EmployeeProject
+        {
+            EmployeeId = request.EmployeeId,
+            ProjectId = request.ProjectId
+        };
+
+        _context.EmployeeProjects.Add(entity);
         await _context.SaveChangesAsync();
+
         return Ok();
     }
 
+    // DELETE: api/employeeprojects?employeeId=1&projectId=2
     [HttpDelete]
-    public async Task<IActionResult> RemoveFromProject(long employeeId, long projectId)
+    public async Task<IActionResult> RemoveFromProject([FromQuery] long employeeId, [FromQuery] long projectId)
     {
         var record = await _context.EmployeeProjects
             .FirstOrDefaultAsync(ep => ep.EmployeeId == employeeId && ep.ProjectId == projectId);
@@ -35,12 +41,18 @@ public class EmployeeProjectsController : ControllerBase
         return NoContent();
     }
 
+    // GET: api/employeeprojects/by-employee/1
     [HttpGet("by-employee/{employeeId}")]
-    public async Task<IActionResult> GetProjectsForEmployee(long employeeId)
+    public async Task<ActionResult<IEnumerable<EmployeeProjectResponse>>> GetProjectsForEmployee(long employeeId)
     {
         var projects = await _context.EmployeeProjects
             .Where(ep => ep.EmployeeId == employeeId)
             .Include(ep => ep.Project)
+            .Select(ep => new EmployeeProjectResponse
+            {
+                ProjectId = ep.Project.ProjectId,
+                ProjectName = ep.Project.ProjectName
+            })
             .ToListAsync();
 
         return Ok(projects);

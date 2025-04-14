@@ -14,30 +14,4 @@ namespace MyApi.DTO.EmployeesDTO
         public List<TaskDto> Tasks { get; set; }
         
     }
-    public class DepartmentDto
-    {
-        public long DepartmentId { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class AddressDto
-    {
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string PostalCode { get; set; }
-    }
-
-    public class ProjectDto
-    {
-        public long ProjectId { get; set; }
-        public string ProjectName { get; set; }
-    }
-
-    public class TaskDto
-    {
-        public long TaskId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime DueDate { get; set; }
-    }
 }

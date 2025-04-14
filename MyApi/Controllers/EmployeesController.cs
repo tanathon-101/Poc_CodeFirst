@@ -89,6 +89,45 @@ public class EmployeesController : ControllerBase
         return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeId }, employee);
     }
 
+    [HttpPost("address")] // 👉 จะเป็น POST: api/employees/address
+    [ActionName("CreateEmployeeAddress")]
+    public async Task<ActionResult<EmployeeResponse>> CreateEmployeeAddress([FromBody] CreateEmployeeAdreesRequest request)
+    {
+        var employee = new Employee
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            DateOfBirth = request.DateOfBirth,
+            PhoneNumber = request.PhoneNumber,
+            Email = request.Email,
+            DepartmentId = request.DepartmentId,
+            Address = new EmployeeAddress
+            {
+                Street = request.Address?.Street,
+                City = request.Address?.City,
+                PostalCode = request.Address?.PostalCode
+            }
+        };
+
+        _context.Employees.Add(employee);
+        await _context.SaveChangesAsync();
+
+        var response = new EmployeeResponse
+        {
+            EmployeeId = employee.EmployeeId,
+            FullName = $"{employee.FirstName} {employee.LastName}",
+            Email = employee.Email,
+            Address = new AddressDto
+            {
+                Street = employee.Address?.Street,
+                City = employee.Address?.City,
+                PostalCode = employee.Address?.PostalCode
+            }
+        };
+
+        return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeId }, response);
+    }
+
 
     // PUT: api/employees/5
     [HttpPut("{id}")]

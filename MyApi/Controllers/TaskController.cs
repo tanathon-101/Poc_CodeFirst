@@ -8,11 +8,11 @@ namespace MyApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeTaskController : ControllerBase
+    public class TaskController : ControllerBase
     {
         private readonly EmployeeContext _context;
 
-        public EmployeeTaskController(EmployeeContext context)
+        public TaskController(EmployeeContext context)
         {
             _context = context;
         }
@@ -71,7 +71,16 @@ namespace MyApi.Controllers
             _context.EmployeeTasks.Add(task);
             await _context.SaveChangesAsync();
 
-            var employee = await _context.Employees.FindAsync(task.EmployeeId);
+            // 👇 เช็คว่ามี EmployeeId หรือไม่
+            string employeeName = null;
+            if (task.EmployeeId.HasValue)
+            {
+                var employee = await _context.Employees.FindAsync(task.EmployeeId);
+                if (employee != null)
+                {
+                    employeeName = $"{employee.FirstName} {employee.LastName}";
+                }
+            }
 
             var response = new EmployeeTaskResponse
             {
@@ -79,10 +88,24 @@ namespace MyApi.Controllers
                 Title = task.Title,
                 Description = task.Description,
                 EmployeeId = task.EmployeeId,
-                EmployeeName = $"{employee.FirstName} {employee.LastName}"
+                EmployeeName = employeeName
             };
 
             return CreatedAtAction(nameof(GetTask), new { id = task.TaskId }, response);
+        }
+        [HttpPut("assign/{taskId}")]
+        public async Task<IActionResult> AssignEmployeeToTask(long taskId, [FromBody] AssignEmployeeToTaskRequest request)
+        {
+            var task = await _context.EmployeeTasks.FindAsync(taskId);
+            if (task == null)
+                return NotFound();
+
+            task.EmployeeId = request.EmployeeId;
+
+            _context.Entry(task).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // PUT: api/employeetask/{id}
